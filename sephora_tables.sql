@@ -31,4 +31,3 @@ CREATE TABLE sephora_product_review (
 
 CREATE INDEX sephora_product_review_product_id_idx ON sephora_product_review (product_id);
 CREATE INDEX sephora_product_review_tags_idx on sephora_product_review USING GIN ("tags");
-CREATE UNIQUE INDEX sephora_product_review_username ON sephora_product_review (product_id, reviewer_username);

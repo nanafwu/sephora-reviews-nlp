@@ -17,8 +17,10 @@ Scrape Sephora Products on Aug 11th 2017
 
 
 def make_db_conn():
+
     engine = create_engine(
-        'postgresql://ubuntu:ubuntu@ec2-13-59-36-9.us-east-2.compute.amazonaws.com:5432/sephora')
+        'postgresql://ubuntuz:ubuntu@ec2-18-220-144-212.us-east-2.compute.amazonaws.com:5432/sephora')
+
     conn = engine.connect()
     return conn
 
@@ -64,6 +66,7 @@ def scrape_product_reviews(product_id):
     if number_reviews_tag:
         total_review_count = number_reviews_tag.find(
             'span', class_='BVRRNumber').text
+        total_review_count = total_review_count.replace(',', '')
         total_review_count = int(total_review_count)
 
     if total_review_count == 0:
@@ -158,12 +161,15 @@ def store_sephora_product_reviews():
     product_query_results = conn.execute(s).fetchall()
     product_ids = [p[0] for p in product_query_results]
 
-    for i, product_id in enumerate(product_ids):
+    for i, product_id in enumerate(product_ids[575:]):
         print('Processing {}: {}'.format(i, product_id))
         results = scrape_product_reviews(product_id)
-        print('Storing {} results for {}: {}...'.format(
-            len(results), i, product_id))
-        conn.execute(sephora_product_review_table.insert(), results)
+        if results:
+            print('Storing {} results for {}: {}...'.format(
+                len(results), i, product_id))
+            conn.execute(sephora_product_review_table.insert(), results)
+        else:
+            print('No reviews for ', product_id)
 
 
 def scrape_product(url):
@@ -273,4 +279,5 @@ if __name__ == '__main__':
     """
     Scraping code last tested 08 / 2017
     """
-    store_sephora_products()
+    # store_sephora_products()
+    store_sephora_product_reviews()
