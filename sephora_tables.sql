@@ -17,6 +17,7 @@ CREATE INDEX sephora_product_category_idx ON sephora_product (category);
 CREATE INDEX sephora_product_detail_text ON sephora_product USING gin(to_tsvector('english', 'detail_text'));
 
 CREATE TABLE sephora_product_review (
+       review_id uuid DEFAULT uuid_generate_v4(),
        product_id VARCHAR(100) NOT NULL,
        review_title VARCHAR(5000) NOT NULL,
        review_text TEXT NOT NULL,
@@ -26,7 +27,8 @@ CREATE TABLE sephora_product_review (
        skin_tone VARCHAR(50),
        eye_color VARCHAR(50),
        reviewer_username VARCHAR(300),
-       tags VARCHAR(5000)[]
+       tags VARCHAR(5000)[],
+       PRIMARY KEY(review_id)
 );
 
 CREATE INDEX sephora_product_review_product_id_idx ON sephora_product_review (product_id);
